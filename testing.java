@@ -26,6 +26,7 @@ public class testing {
         MerryGoRound mg = new MerryGoRound(price, utilityCost, 100, ticketsAvailable, speed, numOfCars, seatsPerCar);
                                              //Im done commenting this, I can't explain this shit anymore
         ArrayList<Attraction> attractions = new ArrayList<>();
+        AmusementPark GilroyGardens = new AmusementPark("Gilroy Gardens", "Gilroy", attractions);
         attractions.add(rc);
         attractions.add(rc2);
         attractions.add(lf);
@@ -102,6 +103,8 @@ public class testing {
             System.out.println("--------------------------------------------------");
             System.out.println("--------------------------------------------------");
         }
+        GilroyGardens.calculateTotalRevenue();
+        System.out.println(GilroyGardens.getTotalRevanue());
         
 
 

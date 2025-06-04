@@ -46,14 +46,24 @@ public class AmusementPark {
     public void setAttractions(ArrayList<Attraction> attractions) {
         this.attractions = attractions;
     }
-    public double getTotalRevenue() {
-        return totalRevenue;
+    public void calculateTotalRevenue() {
+        for(Attraction attraction : attractions) {
+            this.totalRevenue += attraction.getPrice() * attraction.getTicketsAvailible();
+        }
     }
     public void setTotalRevenue(double totalRevenue) {
         this.totalRevenue = totalRevenue;
     }
     public double getTotalUtilityCost() {
         return totalUtilityCost;
+    }
+    public void calculateTotalUtilityCost() {
+        for(Attraction attraction : attractions) {
+            this.totalUtilityCost += attraction.getUtilityCost();
+        }
+    }
+    public double getTotalRevanue() {
+        return totalRevenue;
     }
     @Override
     public String toString() {
