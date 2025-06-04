@@ -7,30 +7,14 @@ public abstract class Attraction {
     private int maxRiders;
 
     private int ticketsAvailible;
-    private int numberOfAttendants;
-
-    private int hoursPerDay;
-    protected boolean isRunning;
+    protected volatile boolean isRunning;
 
     public Attraction(double price, double utilityCost, int maxRiders, 
-                      int ticketsAvailible, int numberOfAttendants, 
-                      int hoursPerDay) {
+                      int ticketsAvailible) {
         this.price = price;
         this.utilityCost = utilityCost;
         this.maxRiders = maxRiders;
         this.ticketsAvailible = ticketsAvailible;
-        this.numberOfAttendants = numberOfAttendants;
-        this.hoursPerDay = hoursPerDay;
-        NUM_OF_ATTRACTIONS++;
-    }
-     public Attraction(double price, double utilityCost, int maxRiders, int numberOfAttendants, 
-                      int hoursPerDay) {
-        this.price = price;
-        this.utilityCost = utilityCost;
-        this.maxRiders = maxRiders;
-        this.ticketsAvailible = maxRiders;
-        this.numberOfAttendants = numberOfAttendants;
-        this.hoursPerDay = hoursPerDay;
         NUM_OF_ATTRACTIONS++;
     }
     public Attraction() {
@@ -38,8 +22,6 @@ public abstract class Attraction {
         this.utilityCost = 0;
         this.maxRiders = 0;
         this.ticketsAvailible = 0;
-        this.numberOfAttendants = 0;
-        this.hoursPerDay = 0;
         NUM_OF_ATTRACTIONS++;
     }
     public double getPrice() {
@@ -66,19 +48,22 @@ public abstract class Attraction {
     public void setTicketsAvailible(int ticketsAvailible) {
         this.ticketsAvailible = ticketsAvailible;
     }
-    public int getNumberOfAttendants() {
-        return numberOfAttendants;
+    public boolean reduceTicketsAvailible() {
+        if (this.ticketsAvailible > 0 && this.ticketsAvailible >= this.maxRiders) {
+            this.ticketsAvailible -= this.maxRiders;
+            return true;
+        }
+        if (this.ticketsAvailible > 0 && this.ticketsAvailible < this.maxRiders) {
+            System.out.println("Not enough tickets available to reduce by max riders. Reducing by available tickets.");
+            this.ticketsAvailible = 0; // All tickets are used up
+            return true;
+        }
+        System.out.println("No tickets available to reduce.");
+        return false;
     }
-    public void setNumberOfAttendants(int numberOfAttendants) {
-        this.numberOfAttendants = numberOfAttendants;
+    public double calculateRevanue() {
+        return (double)(this.price * this.maxRiders - this.utilityCost);
     }
-    public int getHoursPerDay() {
-        return hoursPerDay;
-    }
-    public void setHoursPerDay(int hoursPerDay) {
-        this.hoursPerDay = hoursPerDay;
-    }
-    
     public static boolean isOpen() {
         return OPEN;
     }
@@ -92,7 +77,7 @@ public abstract class Attraction {
         }
     };
     protected final Runnable checkIfOpen = () -> {
-        if (!OPEN) {
+        if (!isOpen()) {
             System.out.println("The ride is closed!");
             throw new IllegalStateException("The ride is closed!");
         }

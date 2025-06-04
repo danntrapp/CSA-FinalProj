@@ -1,21 +1,20 @@
 package Rides;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
 public class RollerCoaster extends Attraction {
     private int numOfCars;
     private int seatsPerCar;
     private double speed;
     private double height;
     private double length;
-    private final boolean barfBagNeeded;
+    private boolean barfBagNeeded;
 
     public RollerCoaster(double price, double utilityCost, int maxRiders, 
-                         int ticketsAvailible, int numberOfAttendants, 
-                         int hoursPerDay, double speed, 
+                         int ticketsAvailible, double speed, 
                          double height, double length,
                          int numOfCars, int seatsPerCar) {
-        super(price, utilityCost, (numOfCars * seatsPerCar), ticketsAvailible, numberOfAttendants, 
-              hoursPerDay);
+        super(price, utilityCost, (numOfCars * seatsPerCar), ticketsAvailible);
         this.numOfCars = numOfCars;
         this.seatsPerCar = seatsPerCar;
         this.speed = speed;
@@ -66,38 +65,46 @@ public class RollerCoaster extends Attraction {
     public boolean getBarfBagNeeded() {
         return this.barfBagNeeded;
     }
+    public void setBarfBagNeeded(boolean bbNeeded) {
+        this.barfBagNeeded = bbNeeded;
+    }
     public boolean isRunning() {
         return this.isRunning && OPEN;
     }
     public Runnable barf = () ->  {
-        while(true) {
+        while (super.isRunning) {
             int random = (int) (Math.random() * 100);
-            if (random < 10) { // 10% chance of barfing
+            if (random < 10) {
                 System.out.println("Someone barfed! Barf bags are needed!");
                 break;
             } else {
                 System.out.println("No one barfed.");
             }
             try {
-                Thread.sleep(1000); // Check every second
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 System.out.println("Barf check interrupted.");
+                break;
             }
         }
     };
     public Runnable startRide = () -> {
         super.checkIfRunning.run();
-        // Check if the ride is open
         super.checkIfOpen.run();
-        isRunning = true;
+        super.isRunning = true;
         System.out.println("The roller coaster is starting!");
-        Thread barfThread = new Thread(barf);
+
+        Thread barfThread = new Thread(this.barf);
         barfThread.start();
+
+        reduceTicketsAvailible();
+
+        CountDownLatch latch = new CountDownLatch(numOfCars);
+
         for (int i = 0; i < numOfCars; i++) {
             final int carNumber = i + 1;
             System.out.println("Car " + carNumber + " is starting!");
 
-            // Create a separate Timer for each car
             Timer carTimer = new Timer();
 
             TimerTask task = new TimerTask() {
@@ -107,20 +114,27 @@ public class RollerCoaster extends Attraction {
                 }
             };
 
-            // Schedule the task to run periodically
             carTimer.schedule(task, 0, (long) (5000 / speed));
 
-            // Schedule a separate task to cancel the TimerTask after length/speed seconds
             carTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     System.out.println("Car " + carNumber + " has stopped!");
                     carTimer.cancel();
+                    carTimer.purge();
+                    latch.countDown(); // Signal this car is done
                 }
-            }, (int) (length / speed) * 100); // Cancel after length/speed seconds
+            }, (int) (length / speed) * 100);
         }
-        barfThread.interrupt();
-        isRunning = false;
+
+        try {
+            latch.await(); // Wait for all cars to finish
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        barfThread.interrupt(); // Now stop the barf check
+        super.isRunning = false;
+        System.out.println("The roller coaster ride has ended!");
     };
 }
-    

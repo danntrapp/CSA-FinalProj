@@ -4,12 +4,11 @@ public class MerryGoRound extends Attraction implements Runnable {
     private int numOfHorses;
     private int ridersPerHorse;
     private double speed; // in radians per second
-    private boolean isRunning = false;
+    private boolean isRunning;
 
     public MerryGoRound(double price, double utilityCost, int maxRiders, 
-                        int ticketsAvailable, int numberOfAttendants, 
-                        int hoursPerDay, double speed, int numOfHorses, int ridersPerHorse) {
-        super(price, utilityCost, (numOfHorses * ridersPerHorse), ticketsAvailable, numberOfAttendants, hoursPerDay);
+                        int ticketsAvailable, double speed, int numOfHorses, int ridersPerHorse) {
+        super(price, utilityCost, (numOfHorses * ridersPerHorse), ticketsAvailable);
         this.numOfHorses = numOfHorses;
         this.speed = speed;
         this.isRunning = false;
@@ -23,7 +22,7 @@ public class MerryGoRound extends Attraction implements Runnable {
     }
 
     public int getNumOfHorses() {
-        return numOfHorses;
+        return this.numOfHorses;
     }
 
     public void setNumOfHorses(int numOfHorses) {
@@ -31,20 +30,20 @@ public class MerryGoRound extends Attraction implements Runnable {
     }
 
     public double getSpeed() {
-        return speed;
+        return this.speed;
     }
 
     public void setSpeed(double speed) {
         this.speed = speed;
     }
     public int getRidersPerHorse() {
-        return ridersPerHorse;
+        return this.ridersPerHorse;
     }
     public void setRidersPerHorse(int ridersPerHorse) {
         this.ridersPerHorse = ridersPerHorse;
     }
     public boolean isRunning() {
-        return isRunning;
+        return this.isRunning;
     }
     public void setRunning(boolean isRunning) {
         this.isRunning = isRunning;

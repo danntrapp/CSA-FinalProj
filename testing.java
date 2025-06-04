@@ -14,20 +14,16 @@ public class testing {
         double height = 20.0; //in meters
         double length = 500.0; // in meters
         //runs for 5 seconds
-        int ticketsAvailable = 100; 
-        int numberOfAttendants = 2;
+        int ticketsAvailable = 300; 
         int hoursPerDay = 8;
         double price = 5.0;
         double utilityCost = 2.0;
         // Create a new RollerCoaster object
-        RollerCoaster rc = new RollerCoaster(price, utilityCost, 100, ticketsAvailable, numberOfAttendants, 
-                                             hoursPerDay, speed, height, length, numOfCars, seatsPerCar);
-        RollerCoaster rc2 = new RollerCoaster(price, utilityCost, 100, ticketsAvailable, numberOfAttendants, 
-                                             hoursPerDay, speed, height, length, numOfCars, 5);
-        RollerCoaster lf = new LogFlume(price, utilityCost, 100, ticketsAvailable, numberOfAttendants, 
-                                             hoursPerDay, speed, height, length, numOfCars, seatsPerCar, 0.5);
-        MerryGoRound mg = new MerryGoRound(price, utilityCost, 100, ticketsAvailable, numberOfAttendants, 
-                                             hoursPerDay, speed, numOfCars, seatsPerCar);
+        RollerCoaster rc = new RollerCoaster(price, utilityCost, 100, ticketsAvailable, speed, height, length, numOfCars, seatsPerCar);
+        RollerCoaster rc2 = new RollerCoaster(price, utilityCost, 100, ticketsAvailable, 
+                                              speed, height, length, numOfCars, 5);
+        LogFlume lf = new LogFlume(price, utilityCost, 100, ticketsAvailable, numOfCars, speed, height, length, seatsPerCar, 1, 0.5);
+        MerryGoRound mg = new MerryGoRound(price, utilityCost, 100, ticketsAvailable, speed, numOfCars, seatsPerCar);
                                              //Im done commenting this, I can't explain this shit anymore
         ArrayList<Attraction> attractions = new ArrayList<>();
         attractions.add(rc);
@@ -48,13 +44,6 @@ public class testing {
             e.printStackTrace();
         }
         for(Attraction attraction : attractions) {
-            System.out.println("Attraction: " + attraction.getClass().getSimpleName());
-            System.out.println("Price: " + attraction.getPrice());
-            System.out.println("Utility Cost: " + attraction.getUtilityCost());
-            System.out.println("Max Riders: " + attraction.getMaxRiders());
-            System.out.println("Number of Attendants: " + attraction.getNumberOfAttendants());
-            System.out.println("Hours Per Day: " + attraction.getHoursPerDay());
-            System.out.println();
             Method[] m = attraction.getClass().getDeclaredMethods();
             for(Method method : m) {
                 if(method.getName().startsWith("set")) {
@@ -76,13 +65,8 @@ public class testing {
                 }
             }
             System.out.println("Changed Values:");
-            System.out.println("Attraction: " + attraction.getClass().getSimpleName());
-            System.out.println("Price: " + attraction.getPrice());
-            System.out.println("Utility Cost: " + attraction.getUtilityCost());
-            System.out.println("Max Riders: " + attraction.getMaxRiders());
-            System.out.println("Number of Attendants: " + attraction.getNumberOfAttendants());
-            System.out.println("Hours Per Day: " + attraction.getHoursPerDay());
-            System.out.println();
+            System.out.println(attraction.toString());
+            System.out.println("--------------------------------------------------");
             ArrayList<Method> methods = new ArrayList<>();
             methods.addAll(java.util.Arrays.asList(attraction.getClass().getDeclaredMethods()));
             methods.addAll(java.util.Arrays.asList(attraction.getClass().getSuperclass().getDeclaredMethods()));
